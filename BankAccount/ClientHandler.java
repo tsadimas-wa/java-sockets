@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class ClientHandler implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -17,6 +17,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try (
+            socket;
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         ) {
@@ -37,14 +38,8 @@ public class ClientHandler implements Runnable {
 
         } catch (IOException e) {
             System.err.println("Σφάλμα επικοινωνίας με client");
-        } finally {
-            try {
-                socket.close();
-                System.out.println("Σύνδεση με client " + socket.getPort() + "  τερματίστηκε!");
-            } catch (IOException e) {
-                System.out.println("Σφάλμα κατά το κλείσιμο του socket " + e.getMessage());
-            }
         }
+        System.out.println("Σύνδεση με client " + socket.getPort() + "  τερματίστηκε!");
     }
 
     // Επεξεργάζεται μία εντολή: DEPOSIT:<ποσό>, WITHDRAW:<ποσό> ή BALANCE
